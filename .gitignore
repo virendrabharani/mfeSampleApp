@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# macOS specific
+.DS_Store
+
+# Optional: Add other environment files if needed
+# .env
