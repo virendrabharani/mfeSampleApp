@@ -1,5 +1,6 @@
 const { merge } = require('webpack-merge');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+// HtmlWebpackPlugin require is removed and moved to common
+// const HtmlWebpackPlugin = require('html-webpack-plugin');
 // Import the ModuleFederationPlugin <<<--- ADD THIS
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 const commonConfig = require('./webpack.common.js');
@@ -8,6 +9,9 @@ const packageJson = require('../package.json'); // Path is relative to this conf
 
 const devConfig = {
     mode: 'development',
+    output: {
+        publicPath: 'http://localhost:8080/', // Ensure dev server publicPath is set
+      },
     devServer: {
         port: 8080, // Container runs on 8080
         historyApiFallback: {
@@ -29,9 +33,10 @@ const devConfig = {
        shared: packageJson.dependencies,
     }),
         // Keep HtmlWebpackPlugin
-        new HtmlWebpackPlugin({
-            template: './public/index.html'
-        })
+        // HtmlWebpackPlugin instance is removed
+        // new HtmlWebpackPlugin({
+        //     template: './public/index.html'
+        // })
     ]
 };
 

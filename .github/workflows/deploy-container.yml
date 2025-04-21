@@ -1,0 +1,76 @@
+# .github/workflows/deploy-container.yml
+
+# Name for the workflow (shows up in GitHub Actions tab)
+name: deploy-container
+
+# Trigger conditions
+on:
+  push:
+    branches:
+      # Change this to 'master' if your main branch is named master
+      - main
+    # Only run this workflow if files changed within the container package
+    paths:
+      - 'packages/container/**'
+
+# Default settings for commands run in this workflow
+defaults:
+  run:
+    # Sets the default working directory for 'run' steps to packages/container
+    working-directory: packages/container
+
+# Define the jobs to run
+jobs:
+  # Define a job named 'build'
+  build:
+    # Specify the runner environment (virtual machine)
+    runs-on: ubuntu-latest
+
+    # Sequence of steps to execute within the 'build' job
+    steps:
+      # Step 1: Check out the repository code onto the runner
+      - name: Checkout code
+        uses: actions/checkout@v3 # Use version 3 (current standard)
+
+      # Step 2: Set up Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x' # Or your preferred Node.js LTS version
+
+      # Step 3: Install dependencies (runs in packages/container due to defaults)
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Run the production build (runs in packages/container)
+      - name: Build project
+        run: npm run build
+        env:
+          # Pass the PRODUCTION_DOMAIN needed by webpack.prod.js
+          # This value must be configured as a Secret in GitHub repo settings
+          PRODUCTION_DOMAIN: ${{ secrets.PRODUCTION_DOMAIN }}
+
+      # Step 5: Configure AWS credentials using the UPDATED action
+      # This makes the AWS CLI available and configures credentials for the next step
+      - name: Configure AWS Credentials
+        uses: shinyinc/action-aws-cli@v1.2 # Use the corrected action
+
+      # Step 6: Deploy the 'dist' folder contents to the S3 bucket
+      - name: Deploy to S3
+        # Syncs the 'dist' directory to s3://<your-bucket-name>/container/latest/
+        run: aws s3 sync dist s3://${{ secrets.AWS_S3_BUCKET_NAME }}/container/latest
+        env:
+          # Provide AWS credentials and region from GitHub Secrets
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # AWS_DEFAULT_REGION is required by shinyinc/action-aws-cli@v1.2
+          # Replace 'us-east-1' with your actual AWS region if known
+          AWS_DEFAULT_REGION: 'us-east-1'
+
+      # Step 7 (Optional but Recommended for CloudFront): Invalidate cache
+      # - name: Invalidate CloudFront distribution
+      #   run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths "/container/latest/remoteEntry.js"
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     AWS_DEFAULT_REGION: 'us-east-1' # Use the same region
