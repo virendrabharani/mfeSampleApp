@@ -15,8 +15,8 @@ const prodConfig = {
         // Ensures unique filenames based on content for caching
         filename: '[name].[contenthash].js',
         // Important for Module Federation loading chunks later on AWS/S3/CDN
-        // You might need to adjust this based on your final deployment structure
-        publicPath: '/container/latest/',
+         // Add this publicPath property <<<--- ADD THIS LINE
+         publicPath: '/container/latest/', // Tells webpack where assets are hosted
     },
     plugins: [
         new ModuleFederationPlugin({
