@@ -20,7 +20,7 @@ export default () => {
   return (
     // Add some container-specific content to see both <<<--- MODIFY THIS
     <div>
-      <h1>Hi there! (Container)</h1>
+      <h1>Hi there! (Container)!!</h1>
       <hr />
       <MarketingApp /> {/* Render the MarketingApp component */}
     </div>
