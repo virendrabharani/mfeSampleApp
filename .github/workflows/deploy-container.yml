@@ -65,7 +65,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           # AWS_DEFAULT_REGION is required by shinyinc/action-aws-cli@v1.2
           # Replace 'us-east-1' with your actual AWS region if known
-          AWS_DEFAULT_REGION: 'us-east-1'
+          AWS_DEFAULT_REGION: 'us-east-2'
 
       # Step 7 (Optional but Recommended for CloudFront): Invalidate cache
       # - name: Invalidate CloudFront distribution
