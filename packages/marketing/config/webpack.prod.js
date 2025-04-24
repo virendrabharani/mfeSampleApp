@@ -11,8 +11,8 @@ const prodConfig = {
         // Ensures unique filenames based on content for caching
         filename: '[name].[contenthash].js',
         // Important for Module Federation loading chunks later on AWS/S3/CDN
-        // Assumes marketing assets are served from /marketing/latest/ on the domain
-        publicPath: '/marketing/latest/',
+        // Add this publicPath property <<<--- ADD THIS LINE
+        publicPath: '/marketing/latest/', // Tells webpack where assets are hosted
     },
     plugins: [
         new ModuleFederationPlugin({

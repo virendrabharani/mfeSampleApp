@@ -1,0 +1,60 @@
+# .github/workflows/deploy-marketing.yml
+
+# Changed name
+name: deploy-marketing
+
+on:
+  push:
+    branches:
+      - main # Or your primary branch name
+    # Changed path filter
+    paths:
+      - 'packages/marketing/**'
+
+defaults:
+  run:
+    # Changed working directory
+    working-directory: packages/marketing
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
+      # This will now run in packages/marketing
+      - name: Install dependencies
+        run: npm install
+
+      # This will now run in packages/marketing
+      # Note: Marketing doesn't need PRODUCTION_DOMAIN env var for its build
+      - name: Build project
+        run: npm run build
+
+      - name: Configure AWS Credentials
+        uses: shinyinc/action-aws-cli@v1.2
+
+      # Changed S3 destination path
+      - name: Deploy to S3
+        run: aws s3 sync dist s3://${{ secrets.AWS_S3_BUCKET_NAME }}/marketing/latest
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # Ensure this is YOUR correct AWS region
+          AWS_DEFAULT_REGION: 'us-east-1' # Replace 'us-east-1' if needed
+
+      # Changed invalidation path
+      - name: Invalidate CloudFront distribution
+        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths "/marketing/latest/remoteEntry.js"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # Ensure this is YOUR correct AWS region (must match the region used above)
+          AWS_DEFAULT_REGION: 'us-east-2' # Replace 'us-east-1' if needed

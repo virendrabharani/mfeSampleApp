@@ -24,7 +24,7 @@ const prodConfig = {
             remotes: {
                 // The key 'marketing' must match imports like import('marketing/...')
                 // The value tells webpack where to find the remote's entry file in production
-                marketing: `marketing@${domain}/marketing/remoteEntry.js`,
+                marketing: `marketing@${domain}/marketing/latest/remoteEntry.js`,
                 // You will add other remotes (dashboard, auth) here later following the same pattern
                 // dashboard: `dashboard@${domain}/dashboard/remoteEntry.js`,
                 // auth: `auth@${domain}/auth/remoteEntry.js`,
