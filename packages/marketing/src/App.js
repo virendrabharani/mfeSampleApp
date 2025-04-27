@@ -2,18 +2,22 @@ import React from 'react';
 // Import routing components from react-router-dom
 import { Switch, Route, BrowserRouter } from 'react-router-dom';
 // Import StylesProvider from Material-UI
-import { StylesProvider } from '@material-ui/core/styles';
+import { StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
 
 // Import the page components
 import Landing from './components/Landing';
 import Pricing from './components/Pricing';
 
+// Create the class name generator with a production prefix
+const generateClassName = createGenerateClassName({
+  productionPrefix: 'ma', // Prefix for Marketing App
+});
 // Define the main App component
 export default () => {
   return (
     <div>
-      {/* StylesProvider: Addresses potential CSS-in-JS issues in micro-frontends (more later) */}
-      <StylesProvider>
+      {/* Wrap routes with StylesProvider and pass the generator */}
+      <StylesProvider generateClassName={generateClassName}>
         {/* BrowserRouter: Provides routing capabilities */}
         <BrowserRouter>
           {/* Switch: Renders the first Route that matches the current URL */}
