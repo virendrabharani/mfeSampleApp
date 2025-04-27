@@ -1,11 +1,11 @@
 import React from 'react';
 // Import BrowserRouter
 import { BrowserRouter } from 'react-router-dom';
-// Import the new Header component
-import Header from './components/Header';
+
 // Import StylesProvider AND createGenerateClassName
 import { StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
 
+// Import the new Header component
 import Header from './components/Header';
 // Import the MarketingApp component (already there)
 import MarketingApp from './components/MarketingApp';
